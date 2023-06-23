@@ -1,5 +1,6 @@
 from collections import UserDict
-from datetime import datetime, date
+from datetime import datetime
+import pickle
 
 class InvalidPhoneNumber(Exception):
     pass
@@ -98,12 +99,17 @@ class Record:
 
 # наслідується від класу UserDict і виконує пошук за записами до цього класу
 class AddressBook(UserDict):
-    def __init__(self):
-        self.records = []
-
     def add_record(self, record):
         key = record.name.get_value()
         self.data[key] = record
+        
+    def save_to_file(self, filename):
+        with open(filename, 'wb') as file:
+            pickle.dump(self.data, file)
+
+    def load_from_file(self, filename):
+        with open(filename, 'rb') as file:
+            self.data = pickle.load(file)
         
     def __iter__(self):
         self.current_index = 0
@@ -121,3 +127,26 @@ class AddressBook(UserDict):
     def iterator(self, page_size=1):
         self.page_size = page_size
         return self
+    
+    def search(self, query=None, num=None):
+        result = []
+        if query:
+            for k in self.data:
+                if query.lower() in k.lower():
+                    if self.data[k].birthday:
+                        result.append(
+                            f"{k} : {self.data[k].phone.value}; birthday = {self.data[k].birthday.value}")
+                    else:
+                        result.append(
+                            f"{k}: {self.data[k].phone.value}")
+        if num:
+            for k, v in self.data.items():
+                if num in v.phone.value:
+                    if self.data[k].birthday:
+                        result.append(
+                            f"{k} : {v.phone.value}; birthday = {self.data[k].birthday.value}")
+                    else:
+                        result.append(f"{k}: {v.phone.value}")
+        users = [i for i in set(result)]
+        return users
+    
