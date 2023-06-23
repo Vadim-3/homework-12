@@ -129,14 +129,14 @@ class AddressBook(UserDict):
         return self
     
     def search(self, query):
-        search_result = []
+        result = []
         for name, record in self.data.items():
             if query.lower() in name.lower():
-                search_result.append(self.data[name])
+                result.append(self.data[name])
             else:
                 for phone in record.get_phones():
                     if query.lower() in phone.lower():
-                        search_result.append(self.data[name])
+                        result.append(self.data[name])
                         break
-        return search_result
+        return result
     
