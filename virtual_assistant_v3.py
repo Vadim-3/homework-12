@@ -128,25 +128,15 @@ class AddressBook(UserDict):
         self.page_size = page_size
         return self
     
-    def search(self, query=None, num=None):
-        result = []
-        if query:
-            for k in self.data:
-                if query.lower() in k.lower():
-                    if self.data[k].birthday:
-                        result.append(
-                            f"{k} : {self.data[k].phone.value}; birthday = {self.data[k].birthday.value}")
-                    else:
-                        result.append(
-                            f"{k}: {self.data[k].phone.value}")
-        if num:
-            for k, v in self.data.items():
-                if num in v.phone.value:
-                    if self.data[k].birthday:
-                        result.append(
-                            f"{k} : {v.phone.value}; birthday = {self.data[k].birthday.value}")
-                    else:
-                        result.append(f"{k}: {v.phone.value}")
-        res = [i for i in set(result)]
-        return res
+    def search(self, query):
+        search_result = []
+        for name, record in self.data.items():
+            if query.lower() in name.lower():
+                search_result.append(self.data[name])
+            else:
+                for phone in record.get_phones():
+                    if query.lower() in phone.lower():
+                        search_result.append(self.data[name])
+                        break
+        return search_result
     
