@@ -147,6 +147,6 @@ class AddressBook(UserDict):
                             f"{k} : {v.phone.value}; birthday = {self.data[k].birthday.value}")
                     else:
                         result.append(f"{k}: {v.phone.value}")
-        users = [i for i in set(result)]
-        return users
+        res = [i for i in set(result)]
+        return res
     
