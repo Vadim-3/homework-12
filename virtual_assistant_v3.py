@@ -2,13 +2,16 @@ from collections import UserDict
 from datetime import datetime
 import pickle
 
+
 class InvalidPhoneNumber(Exception):
     pass
+
 
 class InvalidBirthday(Exception):
     pass
 
-# батьківський клас для всіх полів 
+
+# батьківський клас для всіх полів
 class Field:
     def __init__(self, value=None):
         self.value = value
@@ -36,7 +39,8 @@ class Name(Field):
 class Phone(Field):
     def __init__(self, phone):
         super().__init__(phone)
-        
+
+
 class Birthday:
     def __init__(self, day, month):
         self.day = day
@@ -52,12 +56,11 @@ class Record:
         if phone:
             self.validate_phone(phone)
 
-
     def validate_phone(self, phone):
         if not isinstance(phone, str) or len(phone) != 10 or not phone.isdigit():
             raise InvalidPhoneNumber("Invalid phone number")
         return phone
-    
+
     def validate_birthday(self, birthday):
         if birthday is None:
             return None
@@ -66,7 +69,7 @@ class Record:
             raise InvalidBirthday("Invalid birthday")
 
         return birthday
-    
+
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
 
@@ -97,12 +100,13 @@ class Record:
         days_until_birthday = (next_birthday - current_date).days
         return days_until_birthday
 
+
 # наслідується від класу UserDict і виконує пошук за записами до цього класу
 class AddressBook(UserDict):
     def add_record(self, record):
         key = record.name.get_value()
         self.data[key] = record
-        
+
     def save_to_file(self, filename):
         with open(filename, 'wb') as file:
             pickle.dump(self.data, file)
@@ -110,7 +114,7 @@ class AddressBook(UserDict):
     def load_from_file(self, filename):
         with open(filename, 'rb') as file:
             self.data = pickle.load(file)
-        
+
     def __iter__(self):
         self.current_index = 0
         return self
@@ -127,7 +131,7 @@ class AddressBook(UserDict):
     def iterator(self, page_size=1):
         self.page_size = page_size
         return self
-    
+
     def search(self, query):
         result = []
         for name, record in self.data.items():
@@ -139,4 +143,3 @@ class AddressBook(UserDict):
                         result.append(self.data[name])
                         break
         return result
-    
